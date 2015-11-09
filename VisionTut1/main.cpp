@@ -12,7 +12,10 @@ using namespace cv;
  */
 
 int main(){
-    // Reads an image called "img.jpg"
+    /*
+     *  Reads an image called "img.jpg"
+     *  Note: the image has to be in the same folder as your executable, not your source files
+     */
     Mat image = imread("img.jpg");
     // Creates a new empty image that has the same size as the orginal image
     Mat new_image = Mat::zeros(image.size(), image.type());
