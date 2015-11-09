@@ -3,37 +3,63 @@
 
 using namespace cv;
 
+
+/*
+ * Modified version of OpenCV's brightness and contrast tutorial
+ *
+ * http://docs.opencv.org/2.4/doc/tutorials/core/basic_linear_transform/basic_linear_transform.html#basic-linear-transform
+ *
+ */
+
 int main(){
+    // Reads an image called "img.jpg"
     Mat image = imread("img.jpg");
+    // Creates a new empty image that has the same size as the orginal image
     Mat new_image = Mat::zeros(image.size(), image.type());
 
     /// Create Windows
-    namedWindow("Control", WINDOW_AUTOSIZE); //create a window called "Control"
+    namedWindow("Control", WINDOW_AUTOSIZE);
     namedWindow("Original Image", WINDOW_AUTOSIZE);
     namedWindow("New Image", WINDOW_AUTOSIZE);
 
-    /// Move Windows, not required
+    /// Move Windows (not required, just QOL)
     moveWindow("New Image", 900, 0);
     moveWindow("Control", 1200, 800);
 
+    /*
+     * The OpenCV slider bar has a minimum value of 0, and is an integer
+     * So if we want to have a negative number or a float, we have to find "tricks" to turn a positive
+     *  integer into a negative integer or a float
+     */
+
     /// Create the variables and control panels
     int ialpha = 100;   //random value of 100; can be anything from 0-300
-    int beta = 50;      //random value of 50
+    int ibeta = 100;    //random value of 100; can be all numbers, but we are limiting it to +- 100 just because
 
-    //creates the slider bars on the Control window
-    cvCreateTrackbar("Contrast", "Control", &ialpha, 300); //alpha from 0-300
-    cvCreateTrackbar("Brightness", "Control", &beta, 100); //beta from 0-100
+    /// Creates the slider bars on the Control window
+    // The contrast slider goes from 0-300, and we will divide it by 100 to get a float from 0-3
+    cvCreateTrackbar("Contrast", "Control", &ialpha, 300);
+    // The brightness slider moves from 0-200, we will subtract 100 from it to get to -100-100
+    cvCreateTrackbar("Brightness", "Control", &ibeta, 200);
 
-    bool run = true;
-    while (run){
-        //converts the intger alpha to the float alpha; convert 0-300 to 0-3
+    bool keepRunning = true;
+    while (keepRunning){
+        // Converts the integer alpha to the float alpha by diving it by 100
         float alpha = ialpha / 100.0f;
+        // Converts 0-200 to -100-100
+        int beta = ibeta - 100;
 
         /// Do the operation new_image(i,j) = alpha*image(i,j) + beta
         for( int y = 0; y < image.rows; y++ ){
             for( int x = 0; x < image.cols; x++ ){
                 for( int c = 0; c < 3; c++ ){
                     new_image.at<Vec3b>(y,x)[c] =
+                        /*
+                         * saturate_cast is an OpenCV casting function
+                         * Casting is when you turn one type into another (ie, int -> char)
+                         * Saturate cast just "clips" the value if it exceeds the maximum
+                         *  ie) saturate_cast<short>(33333) = 32767 (maximum value of a short)
+                         */
                         saturate_cast<uchar>( alpha*( image.at<Vec3b>(y,x)[c] ) + beta );
                 }
             }
@@ -42,11 +68,12 @@ int main(){
         /// Show stuff
         imshow("Original Image", image);
         imshow("New Image", new_image);
-        //wait for a key press every 33ms -> ~30fps
+
+        //wait for a key press every 33ms => ~30fps
         int key = waitKey(33);
         //if the key is esc, stop the program
         if (key == 27){
-            run = false;
+            keepRunning = false;
         }
     }
     return 0;

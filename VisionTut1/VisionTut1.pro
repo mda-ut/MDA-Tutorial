@@ -24,4 +24,5 @@ LIBS += -L/usr/local/lib \
 #TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += \
+    main.cpp
