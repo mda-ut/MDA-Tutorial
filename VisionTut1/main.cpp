@@ -8,15 +8,22 @@ using namespace cv;
  * Modified version of OpenCV's brightness and contrast tutorial
  *
  * http://docs.opencv.org/2.4/doc/tutorials/core/basic_linear_transform/basic_linear_transform.html#basic-linear-transform
- *
+ * James Lu
  */
 
 int main(){
     /*
      *  Reads an image called "img.jpg"
+     *  Refer to the OpenCV website to see which file types are supported
      *  Note: the image has to be in the same folder as your executable, not your source files
      */
     Mat image = imread("img.jpg");
+
+    /*
+     * There should be error checking here to see if the image file exists,
+     *  but we are going to assume it exists
+     */
+
     // Creates a new empty image that has the same size as the orginal image
     Mat new_image = Mat::zeros(image.size(), image.type());
 
@@ -56,6 +63,11 @@ int main(){
         for( int y = 0; y < image.rows; y++ ){
             for( int x = 0; x < image.cols; x++ ){
                 for( int c = 0; c < 3; c++ ){
+                    /*
+                     * Gets the pixel at (y, x),
+                     *  goes through each of the three color chanels (BGR)
+                     *  and applies the transformation                     *
+                     */
                     new_image.at<Vec3b>(y,x)[c] =
                         /*
                          * saturate_cast is an OpenCV casting function
@@ -68,7 +80,7 @@ int main(){
             }
         }
 
-        /// Show stuff
+        /// Show images on the windows created earlier
         imshow("Original Image", image);
         imshow("New Image", new_image);
 
