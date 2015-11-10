@@ -1,5 +1,4 @@
-#include <opencv2/opencv.hpp>
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/highgui/highgui.hpp>
 
 using namespace cv;
 
@@ -66,7 +65,7 @@ int main(){
                     /*
                      * Gets the pixel at (y, x),
                      *  goes through each of the three color chanels (BGR)
-                     *  and applies the transformation                     *
+                     *  and applies the transformation
                      */
                     new_image.at<Vec3b>(y,x)[c] =
                         /*
