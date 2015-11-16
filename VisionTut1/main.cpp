@@ -1,4 +1,16 @@
-#include <opencv2/highgui/highgui.hpp>
+/**
+ * MDA Vision Tutorial 1: Brightness and Contrast controls
+ * Part 1: Showing an image
+ *
+ * This series is based off of OpenCV's own tutorial
+ *      http://docs.opencv.org/2.4/doc/tutorials/core/basic_linear_transform/basic_linear_transform.html
+ *
+ * James Lu
+ */
+
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
 using namespace cv;
 
@@ -11,12 +23,23 @@ using namespace cv;
  */
 
 int main(){
+
     /*
-     *  Reads an image called "img.jpg"
-     *  Refer to the OpenCV website to see which file types are supported
-     *  Note: the image has to be in the same folder as your executable, not your source files
+     * Make a new VideoCapture object, which captures video using your webcam
+     * Parameter 0 is the default webcam
      */
-    Mat image = imread("img.jpg");
+    VideoCapture cap(0);
+    //if the videoCapture object didnt open correctly, end the program
+    if (!cap.isOpened()){
+        std::cout<<"Webcam failed to open" << std::endl;
+        return -1;
+    }
+
+    //Just as before, we make a mat for the iamge we want to use
+    Mat image;
+
+    //now we tell the VidCapture object to capture the image, and store it in the image object we made
+    cap >> image;
 
     /*
      * There should be error checking here to see if the image file exists,
@@ -58,6 +81,10 @@ int main(){
         // Converts 0-200 to -100-100
         int beta = ibeta - 100;
 
+        //now every time we loop, we want to get a new image from the camera
+        cap >> image;
+
+
         /// Do the operation new_image(i,j) = alpha*image(i,j) + beta
         for( int y = 0; y < image.rows; y++ ){
             for( int x = 0; x < image.cols; x++ ){
@@ -83,8 +110,14 @@ int main(){
         imshow("Original Image", image);
         imshow("New Image", new_image);
 
-        //wait for a key press every 33ms => ~30fps
-        int key = waitKey(33);
+        /*
+         * Now we want the program to run as fast as possible, so we only wait for 1ms
+         *  We dont want to wait any longer because image processing takes alot of cpu runtime
+         * Note: waiting for 0 ms is the same as waiting forever for a keypress
+         *      so waiting for 1ms is the fastest wait time
+         */
+        int key = waitKey(1);
+
         //if the key is esc, stop the program
         if (key == 27){
             keepRunning = false;
